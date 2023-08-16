@@ -148,7 +148,6 @@ class ListElement{
 
 
 class TodoList {
-    items
    constructor() {
     this.items = [];
     this.form = document.querySelector("form");
@@ -156,12 +155,12 @@ class TodoList {
     this.form.addEventListener('submit', this.addItem.bind(this));
     this.form.addEventListener('submit', this.clearInput.bind(this));
     this.list.addEventListener('click', this.editInput.bind(this));
-    //this.loadItems();
+    this.loadItems();
    }
 
-    get items(){
+    /*get items(){
           return this.items;
-        }
+        }*/
         
      
     addItem(event){
@@ -176,9 +175,8 @@ class TodoList {
         if(itemsInput.value == "") {
             return alert("Please type in your successes");
         } else {
-        //array to store value with spread method
-        this.items = [...this.items, todo]
         
+        this.items.push(todo);
         
         //addItem inserts the html in hte DOM
         let addItem = this.items.map((item) => {
@@ -199,7 +197,7 @@ class TodoList {
        
        //storage
        this.saveTasks();
-       this.loadItems();
+       //this.loadItems();
        
       
         
@@ -242,13 +240,16 @@ class TodoList {
             localStorage.setItem(`tasks`, myJSON);
             
             listItemText.contentEditable = true;
-            listItemText.style.backgroundColor = "#dddbdb";
+            listItemText.style.backgroundColor = "#ffffff";
             //Done Button
         } else if(event.target.classList.contains("done-button")){
             const listItem = event.target.parentNode;
             const listItemText = listItem.querySelector("div");
             listItemText.contentEditable = false;
-            listItemText.style.backgroundColor = "#ffffff";
+            listItemText.style.backgroundColor = "#0dcaf0";
+
+            //Missing the logic for the LocalStorage to safe the edit content in localStorage
+
             //Delete-Button
         } else if(event.target.classList.contains("delete-button")) {
             const listItem = event.target.parentNode;
@@ -264,10 +265,12 @@ class TodoList {
             if (index !== -1) {
             this.items.splice(index, 1);
             }
-            
+            //Missing making the logic to delete the item from the localStorage
+            //localStorage.setItems("tasks", this.items)
             event.target.parentNode.remove();
 
             localStorage.removeItem()
+            
         //Tick-Box
         } else if(event.target.classList.contains("tick-button")){
             const listItem = event.target.parentNode;
@@ -277,7 +280,7 @@ class TodoList {
             listItemText.style.textDecoration = "line-through":
             listItemText.style.textDecoration = "none";
         }
-    
+        //Missing logic to add the tick in localStorage if the to do is ticked!
     };
 
 
@@ -286,7 +289,7 @@ class TodoList {
        localStorage.setItem(`tasks`, myJSON);
     }
 
-    /*loadItems(){
+    loadItems(){
         const items = localStorage.getItem("tasks");
         console.log(items, "items")
 
@@ -294,9 +297,11 @@ class TodoList {
         const parsedItems = JSON.parse(items);
         console.log(parsedItems);
         //Save localStorage data into this.items array;
-        this.items = [...this.items, parsedItems]
+        //First check that the localStorage is not empty with if statement
+        if (parsedItems !== null) {
+        this.items = parsedItems
         //Iterate array and create new element in the DOM for each one of stored objects
-         let addItem = this.items.map((item) => {
+         let addItems = this.items.map((item) => {
             return `<li class = "item">
                      <div id="${item.id}">${item.text}</div>              
                       <button type="button"  class="edit-button">Edit</button>
@@ -306,10 +311,15 @@ class TodoList {
                 
                     </li>`;
         })
+         //to get rid of the extra , due to the array
+        this.list.innerHTML = (addItems).join(" ");
+       
+    }
+    
         
-        //to get rid of the extra , due to the array
-       this.list.innerHTML = (addItem).join(" ");
-    }*/
+    }
+    
+     
 }
 
 const myToDoList = new TodoList();
